@@ -23,7 +23,7 @@ io.on('connection', socket => {
 
 	socket.on('jwt', jwt => {
 		request({
-			url: '/login/verify',
+			url: '/auth/verify',
 			baseUrl: config.backendURL,
 			method: 'POST',
 			headers: {
@@ -33,7 +33,7 @@ io.on('connection', socket => {
 		}, (err, res, body) => {
 			console.log('body', body);
 			if (err || body.error) {
-				socket.emit('error', `There was a problem with realtimer verifying login! (${body.payload})`);
+				socket.emit('jwt', `There was a problem with realtime verifying login! (${body.payload})`);
 				console.log('There was error verifying JWT!');
 				user = null;
 				return;
@@ -41,8 +41,14 @@ io.on('connection', socket => {
 
 			user = body.payload;
 			console.log('verified');
+
+			socket.emit('jwt', true);
 		});
 	});
 
-	socket.on('admin', ({ secret }));
+	socket.on('admin', (command) => {
+		if (user && user.scopes.contains('admin')) {
+			console.log('do something');
+		}
+	});
 });
