@@ -19,7 +19,7 @@ console.log(`Server listening on *:${port}`);
 io.on('connection', socket => {
 	console.log('client connected!');
 	// Logged in user's payload
-	let user = null;
+	socket.user = null;
 
 	socket.on('jwt', jwt => {
 		request({
@@ -31,24 +31,26 @@ io.on('connection', socket => {
 			},
 			json: true
 		}, (err, res, body) => {
-			console.log('body', body);
 			if (err || body.error) {
 				socket.emit('jwt', `There was a problem with realtime verifying login! (${body.payload})`);
-				console.log('There was error verifying JWT!');
-				user = null;
+				socket.user = null;
 				return;
 			}
 
-			user = body.payload;
-			console.log('verified');
-
+			socket.user = body.payload;
 			socket.emit('jwt', true);
 		});
 	});
 
-	socket.on('admin', (command) => {
-		if (user && user.scopes.contains('admin')) {
-			console.log('do something');
-		}
+	socket.on('admin', enabled => {
+		// if (user && user.scopes.contains('admin')) {
+			const socketIds = Object.keys(io.sockets.connected);
+			for(const socketId of socketIds) {
+				const socket = io.sockets.connected[socketId];
+				if(socket.user && socket.user.user === 'mgira') {
+					socket.emit('admin', !!enabled);
+				}
+			}
+		// }
 	});
 });
