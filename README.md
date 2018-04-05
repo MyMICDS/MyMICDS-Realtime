@@ -1,2 +1,2 @@
 # MyMICDS-Realtime
-Realtime database for MyMICDS
+Realtime updates for MyMICDS
