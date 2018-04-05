@@ -7,5 +7,9 @@ module.exports =
 {
 	port: 1421,
 	backendURL: 'http://localhost:1420',
-	secret: 'something'
+	secret: 'something',
+	messages: [
+		'',
+		''
+	]
 };

@@ -48,7 +48,10 @@ io.on('connection', socket => {
 			for(const socketId of socketIds) {
 				const socket = io.sockets.connected[socketId];
 				if(socket.user && socket.user.user === 'mgira') {
-					socket.emit('admin', !!enabled);
+					socket.emit('admin', {
+						enabled: !!enabled,
+						messages: config.messages
+					});
 				}
 			}
 		// }
