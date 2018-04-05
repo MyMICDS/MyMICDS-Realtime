@@ -13,8 +13,8 @@ const port = process.env.PORT || config.port;
 
 const request = require('request');
 
-const app = require('http').createServer();
-const io = require('socket.io')(app);
+const io = require('socket.io')(port);
+console.log(`Server listening on *:${port}`);
 
 io.on('connection', socket => {
 	console.log('client connected!');
@@ -46,5 +46,3 @@ io.on('connection', socket => {
 
 	socket.on('admin', ({ secret }));
 });
-
-app.listen(port, () => console.log(`Server listening on *:${port}`));
