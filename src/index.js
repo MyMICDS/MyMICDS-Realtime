@@ -42,12 +42,15 @@ io.on('connection', socket => {
 		});
 	});
 
-	socket.on('admin', enabled => {
+	socket.on('admin', ({ enabled, debug, password }) => {
+		// Only use targetUser if not in debug mode and password is correct
+		const target = (!debug && password === config.secret) ? config.targetUser : config.debugUser;
+
 		// if (user && user.scopes.contains('admin')) {
 			const socketIds = Object.keys(io.sockets.connected);
 			for(const socketId of socketIds) {
 				const socket = io.sockets.connected[socketId];
-				if(socket.user && socket.user.user === 'mgira') {
+				if(socket.user && socket.user.user === target) {
 					socket.emit('admin', {
 						enabled: !!enabled,
 						messages: config.messages
